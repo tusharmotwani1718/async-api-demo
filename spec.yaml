@@ -1,0 +1,112 @@
+info:
+  title: Async API demo spec
+  version: 1.0.0
+  description: This is a demo async api for real time event streaming
+  contact:
+    name: Tushar
+    email: tushar@abc.com
+  tags:
+    - name: Events
+      description: this api is an spec for an event driven architecture
+    - name: real-time
+      description: this api supports real time event streaming
+    - name: web-sockets
+      description: web sockets are used as connection channels
+    - name: Products
+      descritpion: api for ecommerce products events
+
+servers:
+  localhost:
+    host: http://localhost:5672 # local running background worker (bullMQ, rabbitMQ)
+    pathname: /v1
+    protocol: amqp
+    protocolVersion: 1.0
+    description: Localhost rabbitMQ server
+    title: Localhost server
+    security:
+      - type: http
+        scheme: bearer
+    tags:
+      - name: localhost
+      - description: localhost environment
+
+channels:
+  product:
+    address: 'products-${product}'
+    title: Products channel
+    description: channel used to exchange messages about product events
+    messages:
+      productAddedToList:
+        $ref: '#/components/messages/productAdded'
+      productRemovedFromList:
+        $ref: '#/components/messages/productRemoved'
+    parameters:
+      productId:
+        $ref: '#/components/parameters/userId'
+    servers:
+      - $ref: '#/servers/localhost'
+    tags: 
+      - name: products
+        description: products related messages
+
+operations:
+  addProductToList:
+    action: send # send an event message to channel
+    title: Add Product to list
+    summary: action to add a new product
+    channel:
+      $ref: '#/channels/product'
+    tags:
+      - name: product
+      - name: add-product
+      - name: products
+    messages:
+      - $ref: '#/components/messages/productAdded'
+
+# components referenced above in the fields/sub-fields are defined separately
+components:
+  schemas:
+    Product:
+      type: Object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: string 
+    
+    servers:
+      development:
+        host: 'http://localhost:5732'
+        protocol: amqp
+        description: Rabbit MQ server
+        variables:
+          stage:
+            $ref: '#/components/serverVariables/stage'
+    
+    serverVariables:
+      stage:
+        default: demo
+
+    channels:
+      product:
+        address: 'products.${productId}'
+        title: Products Channel
+        description: channel used to exchange messages about product events
+        messages:
+          productAdded:
+            $ref: '#/components/messages/productAdded'
+        parameters:
+          productId:
+            $ref: '#/components/parameters/productId'
+      
+      parameters:
+        productId:
+          description: id of the product being operated
+      
+      messages:
+        productAdded:
+          summary: message for new product added
+          payload:
+            - $ref: '#/components/schemas/Product'
