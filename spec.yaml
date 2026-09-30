@@ -32,20 +32,20 @@ servers:
 
 channels:
   product:
-    address: 'products-${product}'
+    address: "products-${product}"
     title: Products channel
     description: channel used to exchange messages about product events
     messages:
       productAddedToList:
-        $ref: '#/components/messages/productAdded'
+        $ref: "#/components/messages/productAdded"
       productRemovedFromList:
-        $ref: '#/components/messages/productRemoved'
+        $ref: "#/components/messages/productRemoved"
     parameters:
       productId:
-        $ref: '#/components/parameters/userId'
+        $ref: "#/components/parameters/userId"
     servers:
-      - $ref: '#/servers/localhost'
-    tags: 
+      - $ref: "#/servers/localhost"
+    tags:
       - name: products
         description: products related messages
 
@@ -55,13 +55,13 @@ operations:
     title: Add Product to list
     summary: action to add a new product
     channel:
-      $ref: '#/channels/product'
+      $ref: "#/channels/product"
     tags:
       - name: product
       - name: add-product
       - name: products
     messages:
-      - $ref: '#/components/messages/productAdded'
+      - $ref: "#/components/messages/productAdded"
 
 # components referenced above in the fields/sub-fields are defined separately
 components:
@@ -74,39 +74,39 @@ components:
           format: int64
         name:
           type: string
-          description: string 
-    
+          description: string
+
     servers:
       development:
-        host: 'http://localhost:5732'
+        host: "http://localhost:5732"
         protocol: amqp
         description: Rabbit MQ server
         variables:
           stage:
-            $ref: '#/components/serverVariables/stage'
-    
+            $ref: "#/components/serverVariables/stage"
+
     serverVariables:
       stage:
         default: demo
 
     channels:
       product:
-        address: 'products.${productId}'
+        address: "products.${productId}"
         title: Products Channel
         description: channel used to exchange messages about product events
         messages:
           productAdded:
-            $ref: '#/components/messages/productAdded'
+            $ref: "#/components/messages/productAdded"
         parameters:
           productId:
-            $ref: '#/components/parameters/productId'
-      
+            $ref: "#/components/parameters/productId"
+
       parameters:
         productId:
           description: id of the product being operated
-      
+
       messages:
         productAdded:
           summary: message for new product added
           payload:
-            - $ref: '#/components/schemas/Product'
+            - $ref: "#/components/schemas/Product"
