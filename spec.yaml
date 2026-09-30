@@ -4,7 +4,7 @@ info:
   description: This is a demo async api for real time event streaming
   contact:
     name: Tushar
-    email: tushar@abc.com
+    email: tushar@code.com
   tags:
     - name: Events
       description: this api is an spec for an event driven architecture
