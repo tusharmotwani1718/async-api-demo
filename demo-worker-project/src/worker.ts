@@ -14,7 +14,7 @@ export const worker = new Worker(
         // Pretend we're doing some real work
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        console.log("Order processed:", job.data.id);
+        console.log("Order processed:", event.data.orderId);
     },
     {
         connection,
