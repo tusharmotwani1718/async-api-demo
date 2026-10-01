@@ -1,20 +1,24 @@
 import { Worker } from "bullmq";
 import { connection } from "./queue";
+import type { OrderCreatedEvent } from "./events";
 
 export const worker = new Worker(
     "orders",
     async (job) => {
-      console.log("Received job:", job.name);
-      console.log("Order:", job.data);
-  
-      // Pretend we're doing some real work
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-      console.log("Order processed:", job.data.id);
+
+        const event = job.data as OrderCreatedEvent;
+
+        console.log("Received event:", event.type);
+        console.log("Order:", event.data);
+
+        // Pretend we're doing some real work
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        console.log("Order processed:", job.data.id);
     },
     {
-      connection,
+        connection,
     },
-  );
-  
-  console.log("Order worker started");
+);
+
+console.log("Order worker started");

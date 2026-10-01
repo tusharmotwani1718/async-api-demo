@@ -1,29 +1,26 @@
+import type { OrderCreatedEvent } from "./events";
 import { ordersQueue } from "./queue";
 import { nanoid } from "nanoid";
 
-interface CreatedOrder {
-    id: string
-    title: string
-    createdAt: Date
-    payment: number
-    customerName: string
-    description?: string
-}
 
 
 async function createdOrder() {
     try {
-        const orderToAdd: CreatedOrder = {
-            id: nanoid(),
-            title: "New order",
-            createdAt: new Date(),
-            payment: 1799,
-            customerName: "Tushar"
-        }
-
-        await ordersQueue.add("OrderCreated", orderToAdd);
-
-        await ordersQueue.close();
+        const event: OrderCreatedEvent = {
+            type: "OrderCreated",
+        
+            data: {
+              orderId: nanoid(),
+              username: "tushar",
+              payment: 1799,
+            },
+          };
+        
+          await ordersQueue.add("event", event);
+        
+          console.log("OrderCreated event published");
+        
+          await ordersQueue.close();
 
         console.log('order added to queue');
     } catch (error) {
