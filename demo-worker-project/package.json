@@ -1,0 +1,23 @@
+{
+  "name": "demo-worker-project",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "tsx": "^4.23.15"
+  },
+  "scripts": {
+    "producer": "bunx tsx src/producer.ts",
+    "worker": "bunx tsx src/worker.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "bullmq": "^6.3.11",
+    "ioredis": "^6.0.0",
+    "nanoid": "^6.0.1",
+    "redis": "^6.3.0"
+  }
+}
