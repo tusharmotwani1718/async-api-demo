@@ -1,0 +1,76 @@
+info: 
+  title: Order Processing API
+  version: 1.0.0
+  description: This is a demo async api for real time event streaming
+servers:
+  development:
+    host: localhost:6379 # local running redis bullmq server
+    protocol: redis
+channels:
+  orders:
+    address: orders # orders queue name
+    title: Orders channel
+operations:
+  # operation to publish an order to the orders queue (channel) by the producer
+  publishOrder:
+    action: send
+    channel: 
+      $ref: "#/channels/orders"
+    messages:
+      - $ref: "#/components/messages/orderSentToProcessingQueue"
+  
+  # operation to receive an order from the orders queue (channel) by the worker
+  receiveOrder:
+    action: receive
+    channel:
+      $ref: "#/channels/orders"
+    messages:
+      - $ref: "#/components/messages/orderProcessingReceived"
+
+components:
+  messages:
+    orderSentToProcessingQueue:
+      name: orderSentToProcessingQueue
+      title: Order sent to processing queue
+      description: This message is sent when an order is sent to the processing queue
+      # payload sent from the processor to the queue
+      payload:
+        $ref: "#/components/schemas/orderProcessingPayload"
+
+    orderProcessingReceived:
+      name: orderProcessingReceived
+      title: Order processing received from the queue
+      description: This message is sent when an order is received from the queue
+      # payload sent from the queue to the processor (same as the payload sent from the processor to the queue in our app)
+      payload:
+        $ref: "#/components/schemas/orderProcessingPayload"
+
+  schemas:
+    orderProcessingPayload:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type: 
+          type: string
+          description: The type of the event (OrderCreated)
+          const: OrderCreated
+        # data is nested object in our event type (OrderCreatedEvent)
+        data:
+          type: object
+          required:
+            - orderId
+            - username
+            - payment
+
+          properties:
+            orderId:
+              type: string
+              description: The id of the order
+            username:
+              type: string
+              description: The username of the user who placed the order
+            payment:
+              type: number
+              description: The payment amount of the order
